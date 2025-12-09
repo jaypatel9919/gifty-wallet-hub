@@ -30,9 +30,13 @@ import AdminNetworks from "./pages/admin/AdminNetworks";
 import AdminStores from "./pages/admin/AdminStores";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTransactions from "./pages/admin/AdminTransactions";
+import AdminBillBook from "./pages/admin/DetailedBillBook";
 import AdminSettlements from "./pages/admin/AdminSettlements";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminLogs from "./pages/admin/AdminLogs";
+
+// Claim Page
+import ClaimInvitation from "./pages/ClaimInvitation";
 
 // Network Admin Pages
 import NetworkAdminDashboard from "./pages/admin/NetworkAdminDashboard";
@@ -76,6 +80,7 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/claim/:token" element={<ClaimInvitation />} />
           
           {/* User Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
@@ -90,6 +95,7 @@ const App = () => (
           <Route path="/admin/stores" element={<AdminStores />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/transactions" element={<AdminTransactions />} />
+          <Route path="/admin/billbook" element={<AdminBillBook role="super-admin" />} />
           <Route path="/admin/settlements" element={<AdminSettlements />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/logs" element={<AdminLogs />} />

@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
 import { QrCode, Share2, ArrowRightLeft, Gift, Wallet, Shield, Clock, ChevronLeft, Lock, Unlock } from "lucide-react";
 import { useState } from "react";
-import OTPModal from "@/components/modals/OTPModal";
+import GiftCardModal from "@/components/modals/GiftCardModal";
+import ShareAccessModal from "@/components/modals/ShareAccessModal";
+import TransferCardModal from "@/components/modals/TransferCardModal";
 
 // Demo card data
 const cardData = {
@@ -37,7 +39,9 @@ const cardData = {
 const CardDetail = () => {
   const { id } = useParams();
   const [showQR, setShowQR] = useState(false);
-  const [showOTP, setShowOTP] = useState(false);
+  const [showGift, setShowGift] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
   const [activeTab, setActiveTab] = useState<"transactions" | "perks" | "security">("transactions");
 
   return (
@@ -133,15 +137,15 @@ const CardDetail = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
-              <Button variant="accent" onClick={() => setShowOTP(true)}>
+              <Button variant="accent" onClick={() => setShowShare(true)}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share Access
               </Button>
-              <Button variant="outline" onClick={() => setShowOTP(true)}>
+              <Button variant="outline" onClick={() => setShowTransfer(true)}>
                 <ArrowRightLeft className="h-4 w-4 mr-2" />
                 Transfer Card
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => setShowGift(true)}>
                 <Gift className="h-4 w-4 mr-2" />
                 Gift Similar Card
               </Button>
@@ -264,16 +268,23 @@ const CardDetail = () => {
         </div>
       )}
 
-      {/* OTP Modal */}
-      <OTPModal
-        isOpen={showOTP}
-        onClose={() => setShowOTP(false)}
-        onVerify={(otp) => {
-          console.log("OTP verified:", otp);
-          setShowOTP(false);
-        }}
-        title="Verify Your Identity"
-        subtitle="Enter the OTP sent to your phone to continue"
+      {/* Modals */}
+      <GiftCardModal
+        isOpen={showGift}
+        onClose={() => setShowGift(false)}
+        cardName={cardData.planName}
+        storeName={cardData.storeName}
+      />
+      <ShareAccessModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        cardName={cardData.planName}
+      />
+      <TransferCardModal
+        isOpen={showTransfer}
+        onClose={() => setShowTransfer(false)}
+        cardName={cardData.planName}
+        balance={cardData.balance}
       />
     </PublicLayout>
   );
