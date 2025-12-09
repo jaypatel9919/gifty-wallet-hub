@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import StoreSwitcher from "@/components/StoreSwitcher";
 import {
   LayoutDashboard,
   Building2,
@@ -20,6 +21,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const mockStores = [
+  { id: "1", name: "Fashion Hub", city: "New York" },
+  { id: "2", name: "Fashion Hub - Brooklyn", city: "Brooklyn" },
+  { id: "3", name: "Fashion Hub - Queens", city: "Queens" },
+];
+
 interface AdminLayoutProps {
   children: ReactNode;
   role: "super-admin" | "network-admin" | "store-admin";
@@ -32,6 +39,7 @@ const superAdminMenu = [
   { icon: Store, label: "Stores", path: "/admin/stores" },
   { icon: Users, label: "Users & Roles", path: "/admin/users" },
   { icon: CreditCard, label: "Transactions", path: "/admin/transactions" },
+  { icon: FileText, label: "Bill Book", path: "/admin/billbook" },
   { icon: FileText, label: "Settlements", path: "/admin/settlements" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
   { icon: FileText, label: "Audit Logs", path: "/admin/logs" },
@@ -60,6 +68,7 @@ const storeAdminMenu = [
 
 const AdminLayout = ({ children, role, title }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentStore, setCurrentStore] = useState(mockStores[0]);
   const location = useLocation();
 
   const menu = role === "super-admin" 
@@ -91,6 +100,17 @@ const AdminLayout = ({ children, role, title }: AdminLayoutProps) => {
             </Link>
             <p className="text-xs text-sidebar-foreground/60 mt-2">{roleLabel} Panel</p>
           </div>
+
+          {/* Store Switcher for Store Admin */}
+          {role === "store-admin" && (
+            <div className="p-4 border-b border-sidebar-border">
+              <StoreSwitcher
+                stores={mockStores}
+                currentStore={currentStore}
+                onStoreChange={setCurrentStore}
+              />
+            </div>
+          )}
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
