@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { Menu, X, ChevronDown, User, Bell } from "lucide-react";
+import { Menu, X, Bell } from "lucide-react";
 import { useState } from "react";
+import ProfileDropdown from "@/components/ProfileDropdown";
 
 interface PublicNavbarProps {
   isLoggedIn?: boolean;
@@ -43,17 +44,18 @@ const PublicNavbar = ({ isLoggedIn = false }: PublicNavbarProps) => {
           <div className="hidden lg:flex items-center gap-3">
             {isLoggedIn ? (
               <>
-                <Button variant="ghost" size="icon-sm">
-                  <Bell className="h-5 w-5" />
-                </Button>
+                <Link to="/notifications">
+                  <Button variant="ghost" size="icon" className="relative">
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+                  </Button>
+                </Link>
                 <Link to="/dashboard">
                   <Button variant="accent" size="sm">
                     My Cards
                   </Button>
                 </Link>
-                <Button variant="ghost" size="icon" className="rounded-full bg-muted">
-                  <User className="h-5 w-5" />
-                </Button>
+                <ProfileDropdown />
               </>
             ) : (
               <>
