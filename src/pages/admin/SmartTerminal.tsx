@@ -4,6 +4,7 @@ import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import OTPModal from "@/components/modals/OTPModal";
+import QRScanOverlay from "@/components/QRScanOverlay";
 import { QrCode, Search, User, CreditCard, Clock, Shield, ArrowLeft, Check, X, Loader2 } from "lucide-react";
 
 type CardData = {
@@ -22,15 +23,16 @@ const SmartTerminal = () => {
   const [activeTab, setActiveTab] = useState<"load" | "redeem" | "history">("load");
   const [amount, setAmount] = useState("");
   const [showOTP, setShowOTP] = useState(false);
+  const [showQRScanner, setShowQRScanner] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cardData, setCardData] = useState<CardData>(null);
 
   // Simulate card lookup
-  const handleLookup = () => {
+  const handleLookup = (lookupValue?: string) => {
     setIsLoading(true);
     setTimeout(() => {
       setCardData({
-        cardNumber: "GTGF-4521-8847-2233",
+        cardNumber: lookupValue || "GTGF-4521-8847-2233",
         ownerName: "John Doe",
         balance: "$250.00",
         storeName: "Fashion Hub",
@@ -41,6 +43,11 @@ const SmartTerminal = () => {
       });
       setIsLoading(false);
     }, 1000);
+  };
+
+  const handleQRScan = (code: string) => {
+    setCardLookup(code);
+    handleLookup(code);
   };
 
   const handleSendOTP = () => {
@@ -89,7 +96,10 @@ const SmartTerminal = () => {
             </h2>
 
             {/* Scan Button */}
-            <button className="w-full py-8 border-2 border-dashed border-accent/50 rounded-xl mb-6 hover:bg-accent/5 transition-colors group">
+            <button
+              onClick={() => setShowQRScanner(true)}
+              className="w-full py-8 border-2 border-dashed border-accent/50 rounded-xl mb-6 hover:bg-accent/5 transition-colors group"
+            >
               <QrCode className="h-16 w-16 mx-auto mb-3 text-accent group-hover:scale-110 transition-transform" />
               <span className="text-lg font-medium text-foreground">Scan QR Code</span>
               <p className="text-sm text-muted-foreground mt-1">Click to activate camera</p>
@@ -108,7 +118,7 @@ const SmartTerminal = () => {
             <Button
               variant="accent"
               className="w-full mt-4 h-12 text-lg"
-              onClick={handleLookup}
+              onClick={() => handleLookup()}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -267,7 +277,7 @@ const SmartTerminal = () => {
                   <div key={tx.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        tx.type === "Load" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"
+                        tx.type === "Load" ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
                       }`}>
                         {tx.type === "Load" ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                       </div>
@@ -276,7 +286,7 @@ const SmartTerminal = () => {
                         <p className="text-xs text-muted-foreground">{tx.time}</p>
                       </div>
                     </div>
-                    <span className={`font-semibold ${tx.type === "Load" ? "text-emerald-600" : "text-foreground"}`}>
+                    <span className={`font-semibold ${tx.type === "Load" ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"}`}>
                       {tx.amount}
                     </span>
                   </div>
@@ -294,6 +304,13 @@ const SmartTerminal = () => {
         onVerify={handleVerifyOTP}
         title="Customer Verification"
         subtitle="Ask customer to enter their OTP"
+      />
+
+      {/* QR Scanner Overlay */}
+      <QRScanOverlay
+        isOpen={showQRScanner}
+        onClose={() => setShowQRScanner(false)}
+        onScan={handleQRScan}
       />
     </div>
   );

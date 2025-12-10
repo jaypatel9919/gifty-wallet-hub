@@ -23,6 +23,9 @@ import CardDetail from "./pages/CardDetail";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import AllCards from "./pages/AllCards";
+import AllTransactions from "./pages/AllTransactions";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Super Admin Pages
 import SuperAdminDashboard from "./pages/admin/SuperAdminDashboard";
@@ -46,6 +49,7 @@ import NetworkOffers from "./pages/admin/NetworkOffers";
 import NetworkBillBook from "./pages/admin/NetworkBillBook";
 import NetworkAdmins from "./pages/admin/NetworkAdmins";
 import NetworkLogs from "./pages/admin/NetworkLogs";
+import StoreApprovals from "./pages/admin/StoreApprovals";
 
 // Store Admin Pages
 import StoreAdminDashboard from "./pages/admin/StoreAdminDashboard";
@@ -77,6 +81,7 @@ const App = () => (
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/support" element={<Support />} />
@@ -84,7 +89,9 @@ const App = () => (
           
           {/* User Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/cards/:id" element={<CardDetail />} />
+          <Route path="/dashboard/cards" element={<AllCards />} />
+          <Route path="/dashboard/transactions" element={<AllTransactions />} />
+          <Route path="/card/:id" element={<CardDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
@@ -108,6 +115,7 @@ const App = () => (
           <Route path="/network-admin/billbook" element={<NetworkBillBook />} />
           <Route path="/network-admin/admins" element={<NetworkAdmins />} />
           <Route path="/network-admin/logs" element={<NetworkLogs />} />
+          <Route path="/network-admin/approvals" element={<StoreApprovals />} />
           
           {/* Store Admin */}
           <Route path="/store-admin" element={<StoreAdminDashboard />} />

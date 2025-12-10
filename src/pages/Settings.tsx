@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Bell, Mail, Phone, MessageSquare, Shield, Moon, Sun, Smartphone } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "@/hooks/useTheme";
 
 const Settings = () => {
+  const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState({
     email: true,
     sms: true,
@@ -155,7 +157,11 @@ const Settings = () => {
           <div className="bg-card border border-border rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
-                <Sun className="h-5 w-5 text-foreground" />
+                {theme === "dark" ? (
+                  <Moon className="h-5 w-5 text-foreground" />
+                ) : (
+                  <Sun className="h-5 w-5 text-foreground" />
+                )}
               </div>
               <div>
                 <h2 className="font-semibold text-foreground">Appearance</h2>
@@ -164,11 +170,19 @@ const Settings = () => {
             </div>
 
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 justify-center gap-2">
+              <Button
+                variant={theme === "light" ? "default" : "outline"}
+                className="flex-1 justify-center gap-2"
+                onClick={() => setTheme("light")}
+              >
                 <Sun className="h-4 w-4" />
                 Light
               </Button>
-              <Button variant="outline" className="flex-1 justify-center gap-2">
+              <Button
+                variant={theme === "dark" ? "default" : "outline"}
+                className="flex-1 justify-center gap-2"
+                onClick={() => setTheme("dark")}
+              >
                 <Moon className="h-4 w-4" />
                 Dark
               </Button>
