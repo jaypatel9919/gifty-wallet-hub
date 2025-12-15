@@ -92,13 +92,23 @@ const AllCards = () => {
         {mockCards.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {mockCards.map((card) => (
-              <Link key={card.id} to={`/card/${card.id}`}>
-              <GiftCardPreview
-                  storeName={card.storeName}
-                  planName={card.planName}
-                  balance={card.balance}
-                  cardNumber={card.cardNumber}
-                />
+              <Link key={card.id} to={`/card/${card.id}`} className="block">
+                <div className="transition-transform hover:scale-[1.02]">
+                  <GiftCardPreview
+                    storeName={card.storeName}
+                    planName={card.planName}
+                    balance={card.balance}
+                    cardNumber={card.cardNumber.slice(-9)}
+                  />
+                  <div className="mt-2 flex items-center justify-between px-1">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      card.status === "Active" ? "status-active" : "status-blocked"
+                    }`}>
+                      {card.status}
+                    </span>
+                    <span className="text-xs text-muted-foreground font-mono">{card.cardNumber.slice(-9)}</span>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>

@@ -2,11 +2,12 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import GiftCardPreview from "@/components/cards/GiftCardPreview";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { QrCode, Share2, ArrowRightLeft, Gift, Wallet, Shield, Clock, ChevronLeft, Lock, Unlock } from "lucide-react";
+import { QrCode, Share2, ArrowRightLeft, Gift, Wallet, Shield, ChevronLeft, Lock, Plus } from "lucide-react";
 import { useState } from "react";
 import GiftCardModal from "@/components/modals/GiftCardModal";
 import ShareAccessModal from "@/components/modals/ShareAccessModal";
 import TransferCardModal from "@/components/modals/TransferCardModal";
+import LoadBalanceModal from "@/components/modals/LoadBalanceModal";
 
 // Demo card data
 const cardData = {
@@ -42,6 +43,7 @@ const CardDetail = () => {
   const [showGift, setShowGift] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
+  const [showLoad, setShowLoad] = useState(false);
   const [activeTab, setActiveTab] = useState<"transactions" | "perks" | "security">("transactions");
 
   return (
@@ -137,17 +139,21 @@ const CardDetail = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
-              <Button variant="accent" onClick={() => setShowShare(true)}>
+              <Button variant="accent" onClick={() => setShowLoad(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Load Balance
+              </Button>
+              <Button variant="gift" onClick={() => setShowGift(true)}>
+                <Gift className="h-4 w-4 mr-2" />
+                Gift This Card
+              </Button>
+              <Button variant="outline" onClick={() => setShowShare(true)}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share Access
               </Button>
               <Button variant="outline" onClick={() => setShowTransfer(true)}>
                 <ArrowRightLeft className="h-4 w-4 mr-2" />
                 Transfer Card
-              </Button>
-              <Button variant="outline" onClick={() => setShowGift(true)}>
-                <Gift className="h-4 w-4 mr-2" />
-                Gift Similar Card
               </Button>
             </div>
 
@@ -285,6 +291,12 @@ const CardDetail = () => {
         onClose={() => setShowTransfer(false)}
         cardName={cardData.planName}
         balance={cardData.balance}
+      />
+      <LoadBalanceModal
+        isOpen={showLoad}
+        onClose={() => setShowLoad(false)}
+        cardName={cardData.planName}
+        storeName={cardData.storeName}
       />
     </PublicLayout>
   );
