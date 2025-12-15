@@ -1,8 +1,11 @@
+import { useState } from "react";
 import PublicLayout from "@/components/layout/PublicLayout";
 import GiftCardPreview from "@/components/cards/GiftCardPreview";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus, ArrowUpRight, ArrowDownLeft, Bell, CreditCard, TrendingUp, Gift } from "lucide-react";
+import GiftCardModal from "@/components/modals/GiftCardModal";
+import LoadBalanceModal from "@/components/modals/LoadBalanceModal";
 
 // Demo data
 const userCards = [
@@ -25,6 +28,9 @@ const notifications = [
 ];
 
 const Dashboard = () => {
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [showLoadModal, setShowLoadModal] = useState(false);
+  
   const totalBalance = userCards.reduce((sum, card) => {
     return sum + parseFloat(card.balance.replace("$", "").replace(",", ""));
   }, 0);
@@ -84,7 +90,9 @@ const Dashboard = () => {
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-foreground">My Cards</h2>
-                <Button variant="ghost" size="sm">View All</Button>
+                <Link to="/dashboard/cards">
+                  <Button variant="ghost" size="sm">View All</Button>
+                </Link>
               </div>
               <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
                 {userCards.map((card) => (
@@ -115,7 +123,9 @@ const Dashboard = () => {
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-foreground">Recent Transactions</h2>
-                <Button variant="ghost" size="sm">View All</Button>
+                <Link to="/dashboard/transactions">
+                  <Button variant="ghost" size="sm">View All</Button>
+                </Link>
               </div>
               <div className="bg-card border border-border rounded-2xl divide-y divide-border">
                 {recentTransactions.map((tx) => (
@@ -170,20 +180,22 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4" size="sm">
-                View All Notifications
-              </Button>
+              <Link to="/notifications">
+                <Button variant="ghost" className="w-full mt-4" size="sm">
+                  View All Notifications
+                </Button>
+              </Link>
             </section>
 
             {/* Quick Actions */}
             <section className="bg-card border border-border rounded-2xl p-6">
               <h3 className="font-semibold text-foreground mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={() => setShowGiftModal(true)}>
                   <Gift className="h-4 w-4 mr-2" />
                   Send a Gift
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={() => setShowLoadModal(true)}>
                   <CreditCard className="h-4 w-4 mr-2" />
                   Load a Card
                 </Button>
@@ -192,6 +204,10 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <GiftCardModal isOpen={showGiftModal} onClose={() => setShowGiftModal(false)} />
+      <LoadBalanceModal isOpen={showLoadModal} onClose={() => setShowLoadModal(false)} />
     </PublicLayout>
   );
 };
