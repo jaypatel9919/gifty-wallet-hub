@@ -1,5 +1,7 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import GiftCardPreview from "@/components/cards/GiftCardPreview";
+import MilestoneProgress, { Milestone } from "@/components/MilestoneProgress";
+import AffiliateInfo from "@/components/AffiliateInfo";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
 import { QrCode, Share2, ArrowRightLeft, Gift, Wallet, Shield, ChevronLeft, Lock, Plus } from "lucide-react";
@@ -22,7 +24,12 @@ const cardData = {
   issuedAt: "Dec 1, 2024",
   expiresAt: "Dec 1, 2025",
   isNetwork: true,
+  networkId: "1",
   networkName: "ShopLocal Network",
+  networkLogo: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&h=100&fit=crop",
+  storeId: "1",
+  storeLogo: "https://images.unsplash.com/photo-1560243563-062bfc001d68?w=100&h=100&fit=crop",
+  storeLocation: "Manhattan, NYC",
   transactions: [
     { id: "1", type: "spend", label: "Fashion Hub - Manhattan", amount: "-$45.00", date: "Dec 8, 2024" },
     { id: "2", type: "load", label: "Balance Load", amount: "+$100.00", date: "Dec 5, 2024" },
@@ -37,6 +44,12 @@ const cardData = {
   ],
 };
 
+const milestones: Milestone[] = [
+  { id: "1", title: "Monthly Spender", description: "Spend $100 this month to earn $5 free", type: "spend", target: 100, current: 67, period: "this month", reward: "+$5 FREE", rewardValue: 5, daysRemaining: 14, isCompleted: false },
+  { id: "2", title: "Loyal Customer", description: "Spend $500 total to unlock Gold perks", type: "spend", target: 500, current: 277, period: "all time", reward: "Gold Status", rewardValue: 0, isCompleted: false },
+  { id: "3", title: "First Month Bonus", description: "Completed! You earned $5", type: "spend", target: 50, current: 50, period: "first month", reward: "+$5 FREE", rewardValue: 5, isCompleted: true, completedAt: "Dec 5, 2024" },
+];
+
 const CardDetail = () => {
   const { id } = useParams();
   const [showQR, setShowQR] = useState(false);
@@ -44,7 +57,7 @@ const CardDetail = () => {
   const [showShare, setShowShare] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
   const [showLoad, setShowLoad] = useState(false);
-  const [activeTab, setActiveTab] = useState<"transactions" | "perks" | "security">("transactions");
+  const [activeTab, setActiveTab] = useState<"transactions" | "milestones" | "perks" | "security">("transactions");
 
   return (
     <PublicLayout isLoggedIn={true}>
@@ -83,6 +96,26 @@ const CardDetail = () => {
                   Show Full QR
                 </Button>
               </div>
+
+              {/* Affiliate Info */}
+              <AffiliateInfo
+                type="store"
+                id={cardData.storeId}
+                name={cardData.storeName}
+                logo={cardData.storeLogo}
+                location={cardData.storeLocation}
+              />
+
+              {cardData.isNetwork && (
+                <AffiliateInfo
+                  type="network"
+                  id={cardData.networkId}
+                  name={cardData.networkName}
+                  logo={cardData.networkLogo}
+                  storeCount={25}
+                  perks={["5% cashback", "Cross-store redemption"]}
+                />
+              )}
 
               {/* Quick Actions */}
               <div className="grid grid-cols-2 gap-3">
@@ -159,16 +192,17 @@ const CardDetail = () => {
 
             {/* Tabs */}
             <div className="border-b border-border">
-              <div className="flex gap-6">
+              <div className="flex gap-6 overflow-x-auto">
                 {[
                   { id: "transactions", label: "Transactions" },
+                  { id: "milestones", label: "Milestones" },
                   { id: "perks", label: "Perks & Conditions" },
-                  { id: "security", label: "Security & Settings" },
+                  { id: "security", label: "Security" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                    className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
+                    className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === tab.id
                         ? "border-accent text-accent"
                         : "border-transparent text-muted-foreground hover:text-foreground"
@@ -185,22 +219,23 @@ const CardDetail = () => {
               {activeTab === "transactions" && (
                 <div className="space-y-3">
                   {cardData.transactions.map((tx) => (
-                    <div
-                      key={tx.id}
-                      className="flex items-center justify-between p-4 bg-card border border-border rounded-xl"
-                    >
+                    <div key={tx.id} className="flex items-center justify-between p-4 bg-card border border-border rounded-xl">
                       <div>
                         <p className="font-medium text-foreground">{tx.label}</p>
                         <p className="text-sm text-muted-foreground">{tx.date}</p>
                       </div>
-                      <span
-                        className={`font-semibold ${
-                          tx.type === "load" ? "text-emerald-600" : "text-foreground"
-                        }`}
-                      >
+                      <span className={`font-semibold ${tx.type === "load" ? "text-emerald-600" : "text-foreground"}`}>
                         {tx.amount}
                       </span>
                     </div>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === "milestones" && (
+                <div className="space-y-4">
+                  {milestones.map((milestone) => (
+                    <MilestoneProgress key={milestone.id} milestone={milestone} />
                   ))}
                 </div>
               )}
@@ -222,34 +257,32 @@ const CardDetail = () => {
               )}
 
               {activeTab === "security" && (
-                <div className="space-y-4">
-                  <div className="bg-card border border-border rounded-xl p-6">
-                    <h3 className="font-semibold text-foreground mb-4">Security Settings</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-foreground">OTP for Redemptions</p>
-                          <p className="text-sm text-muted-foreground">Require OTP for all transactions</p>
-                        </div>
-                        <Button variant="accent" size="sm">
-                          <Lock className="h-4 w-4 mr-1" />
-                          Enabled
-                        </Button>
+                <div className="bg-card border border-border rounded-xl p-6">
+                  <h3 className="font-semibold text-foreground mb-4">Security Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">OTP for Redemptions</p>
+                        <p className="text-sm text-muted-foreground">Require OTP for all transactions</p>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-foreground">Spending Limit</p>
-                          <p className="text-sm text-muted-foreground">Set maximum per transaction</p>
-                        </div>
-                        <Button variant="outline" size="sm">Configure</Button>
+                      <Button variant="accent" size="sm">
+                        <Lock className="h-4 w-4 mr-1" />
+                        Enabled
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">Spending Limit</p>
+                        <p className="text-sm text-muted-foreground">Set maximum per transaction</p>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-foreground">Block Card</p>
-                          <p className="text-sm text-muted-foreground">Temporarily disable this card</p>
-                        </div>
-                        <Button variant="destructive" size="sm">Block</Button>
+                      <Button variant="outline" size="sm">Configure</Button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">Block Card</p>
+                        <p className="text-sm text-muted-foreground">Temporarily disable this card</p>
                       </div>
+                      <Button variant="destructive" size="sm">Block</Button>
                     </div>
                   </div>
                 </div>
@@ -275,29 +308,10 @@ const CardDetail = () => {
       )}
 
       {/* Modals */}
-      <GiftCardModal
-        isOpen={showGift}
-        onClose={() => setShowGift(false)}
-        cardName={cardData.planName}
-        storeName={cardData.storeName}
-      />
-      <ShareAccessModal
-        isOpen={showShare}
-        onClose={() => setShowShare(false)}
-        cardName={cardData.planName}
-      />
-      <TransferCardModal
-        isOpen={showTransfer}
-        onClose={() => setShowTransfer(false)}
-        cardName={cardData.planName}
-        balance={cardData.balance}
-      />
-      <LoadBalanceModal
-        isOpen={showLoad}
-        onClose={() => setShowLoad(false)}
-        cardName={cardData.planName}
-        storeName={cardData.storeName}
-      />
+      <GiftCardModal isOpen={showGift} onClose={() => setShowGift(false)} cardName={cardData.planName} storeName={cardData.storeName} />
+      <ShareAccessModal isOpen={showShare} onClose={() => setShowShare(false)} cardName={cardData.planName} />
+      <TransferCardModal isOpen={showTransfer} onClose={() => setShowTransfer(false)} cardName={cardData.planName} balance={cardData.balance} />
+      <LoadBalanceModal isOpen={showLoad} onClose={() => setShowLoad(false)} cardName={cardData.planName} storeName={cardData.storeName} />
     </PublicLayout>
   );
 };

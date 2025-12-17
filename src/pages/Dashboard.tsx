@@ -1,30 +1,45 @@
 import { useState } from "react";
 import PublicLayout from "@/components/layout/PublicLayout";
 import GiftCardPreview from "@/components/cards/GiftCardPreview";
+import MilestoneProgress, { Milestone } from "@/components/MilestoneProgress";
+import UpdatesFeed from "@/components/UpdatesFeed";
+import { Update } from "@/components/UpdateCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Plus, ArrowUpRight, ArrowDownLeft, Bell, CreditCard, TrendingUp, Gift } from "lucide-react";
+import { Plus, ArrowUpRight, ArrowDownLeft, Bell, CreditCard, TrendingUp, Gift, Target, Newspaper } from "lucide-react";
 import GiftCardModal from "@/components/modals/GiftCardModal";
 import LoadBalanceModal from "@/components/modals/LoadBalanceModal";
 
 // Demo data
 const userCards = [
-  { id: "1", storeName: "Fashion Hub", planName: "Gold Member", balance: "$250.00", cardNumber: "•••• 4521" },
-  { id: "2", storeName: "ShopLocal Network", planName: "Network Plus", balance: "$115.00", cardNumber: "•••• 8472" },
-  { id: "3", storeName: "Tech Zone", planName: "Premium Card", balance: "$75.50", cardNumber: "•••• 1234" },
+  { id: "1", storeName: "Fashion Hub", planName: "Gold Member", balance: "$250.00", cardNumber: "•••• 4521", networkName: "ShopLocal Network", storeLogo: "https://images.unsplash.com/photo-1560243563-062bfc001d68?w=100&h=100&fit=crop" },
+  { id: "2", storeName: "ShopLocal Network", planName: "Network Plus", balance: "$115.00", cardNumber: "•••• 8472", networkLogo: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&h=100&fit=crop" },
+  { id: "3", storeName: "Tech Zone", planName: "Premium Card", balance: "$75.50", cardNumber: "•••• 1234", storeLogo: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=100&h=100&fit=crop" },
 ];
 
 const recentTransactions = [
   { id: "1", type: "spend", label: "Spent at Fashion Hub", amount: "-$45.00", date: "Today, 2:30 PM", store: "Fashion Hub" },
   { id: "2", type: "load", label: "Loaded ShopLocal Card", amount: "+$100.00", date: "Yesterday", store: "ShopLocal" },
   { id: "3", type: "spend", label: "Spent at Tech Zone", amount: "-$24.50", date: "Dec 5, 2024", store: "Tech Zone" },
-  { id: "4", type: "gift", label: "Received gift from John", amount: "+$50.00", date: "Dec 4, 2024", store: "Network" },
 ];
 
-const notifications = [
-  { id: "1", title: "Gift Received!", message: "Sarah sent you a $50 gift card", time: "2h ago" },
-  { id: "2", title: "New Offer", message: "20% off at Fashion Hub this weekend", time: "5h ago" },
-  { id: "3", title: "Transaction Complete", message: "Payment of $45 confirmed", time: "1d ago" },
+const activeMilestone: Milestone = {
+  id: "1",
+  title: "Monthly Spender",
+  description: "Spend $100 this month",
+  type: "spend",
+  target: 100,
+  current: 67,
+  period: "this month",
+  reward: "+$5 FREE",
+  rewardValue: 5,
+  daysRemaining: 14,
+  isCompleted: false,
+};
+
+const latestUpdates: Update[] = [
+  { id: "1", sourceType: "network", sourceId: "1", sourceName: "ShopLocal Network", title: "Holiday Sale - 20% Extra!", content: "Load any card this December for extra value.", type: "offer", publishedAt: "2h ago" },
+  { id: "2", sourceType: "store", sourceId: "1", sourceName: "Fashion Hub", title: "New Winter Collection", content: "Early access for card holders.", type: "announcement", publishedAt: "5h ago" },
 ];
 
 const Dashboard = () => {
@@ -86,6 +101,20 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* Milestone Progress */}
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  <Target className="h-5 w-5 text-accent" />
+                  Active Milestone
+                </h2>
+                <Link to="/dashboard/cards/1">
+                  <Button variant="ghost" size="sm">View All</Button>
+                </Link>
+              </div>
+              <MilestoneProgress milestone={activeMilestone} compact />
+            </section>
+
             {/* My Cards */}
             <section>
               <div className="flex items-center justify-between mb-6">
@@ -97,14 +126,23 @@ const Dashboard = () => {
               <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
                 {userCards.map((card) => (
                   <Link key={card.id} to={`/dashboard/cards/${card.id}`} className="flex-shrink-0">
-                    <GiftCardPreview
-                      storeName={card.storeName}
-                      planName={card.planName}
-                      balance={card.balance}
-                      cardNumber={card.cardNumber}
-                      size="md"
-                      className="cursor-pointer hover:scale-[1.02] transition-transform"
-                    />
+                    <div className="relative">
+                      <GiftCardPreview
+                        storeName={card.storeName}
+                        planName={card.planName}
+                        balance={card.balance}
+                        cardNumber={card.cardNumber}
+                        size="md"
+                        className="cursor-pointer hover:scale-[1.02] transition-transform"
+                      />
+                      {(card.storeLogo || card.networkLogo) && (
+                        <img 
+                          src={card.storeLogo || card.networkLogo} 
+                          alt="" 
+                          className="absolute top-3 right-3 w-8 h-8 rounded-lg object-cover border-2 border-white/20"
+                        />
+                      )}
+                    </div>
                   </Link>
                 ))}
                 <Link
@@ -160,6 +198,22 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Updates */}
+            <section className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-foreground flex items-center gap-2">
+                  <Newspaper className="h-4 w-4" />
+                  Latest Updates
+                </h3>
+              </div>
+              <UpdatesFeed updates={latestUpdates} maxItems={2} compact />
+              <Link to="/updates">
+                <Button variant="ghost" className="w-full mt-4" size="sm">
+                  View All Updates
+                </Button>
+              </Link>
+            </section>
+
             {/* Notifications */}
             <section className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
@@ -167,18 +221,17 @@ const Dashboard = () => {
                   <Bell className="h-4 w-4" />
                   Notifications
                 </h3>
-                <span className="bg-accent text-accent-foreground text-xs px-2 py-0.5 rounded-full">
-                  {notifications.length}
-                </span>
+                <span className="bg-accent text-accent-foreground text-xs px-2 py-0.5 rounded-full">3</span>
               </div>
-              <div className="space-y-4">
-                {notifications.map((notif) => (
-                  <div key={notif.id} className="border-l-2 border-accent pl-3">
-                    <p className="font-medium text-sm text-foreground">{notif.title}</p>
-                    <p className="text-xs text-muted-foreground">{notif.message}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{notif.time}</p>
-                  </div>
-                ))}
+              <div className="space-y-3 text-sm">
+                <div className="border-l-2 border-accent pl-3">
+                  <p className="font-medium text-foreground">Gift Received!</p>
+                  <p className="text-xs text-muted-foreground">Sarah sent you a $50 gift card</p>
+                </div>
+                <div className="border-l-2 border-accent pl-3">
+                  <p className="font-medium text-foreground">Milestone Progress</p>
+                  <p className="text-xs text-muted-foreground">$33 away from earning $5 free!</p>
+                </div>
               </div>
               <Link to="/notifications">
                 <Button variant="ghost" className="w-full mt-4" size="sm">

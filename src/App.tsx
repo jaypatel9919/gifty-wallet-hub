@@ -16,6 +16,10 @@ import Signup from "./pages/Signup";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Support from "./pages/Support";
+import FAQs from "./pages/FAQs";
+import About from "./pages/About";
+import Testimonials from "./pages/Testimonials";
+import Features from "./pages/Features";
 
 // User Pages
 import Dashboard from "./pages/Dashboard";
@@ -26,6 +30,8 @@ import Settings from "./pages/Settings";
 import AllCards from "./pages/AllCards";
 import AllTransactions from "./pages/AllTransactions";
 import ForgotPassword from "./pages/ForgotPassword";
+import Invite from "./pages/Invite";
+import Updates from "./pages/Updates";
 
 // Super Admin Pages
 import SuperAdminDashboard from "./pages/admin/SuperAdminDashboard";
@@ -50,6 +56,7 @@ import NetworkBillBook from "./pages/admin/NetworkBillBook";
 import NetworkAdmins from "./pages/admin/NetworkAdmins";
 import NetworkLogs from "./pages/admin/NetworkLogs";
 import StoreApprovals from "./pages/admin/StoreApprovals";
+import NetworkUpdates from "./pages/admin/NetworkUpdates";
 
 // Store Admin Pages
 import StoreAdminDashboard from "./pages/admin/StoreAdminDashboard";
@@ -60,6 +67,7 @@ import StoreTransactions from "./pages/admin/StoreTransactions";
 import StoreBillBook from "./pages/admin/StoreBillBook";
 import StoreOffers from "./pages/admin/StoreOffers";
 import StoreLogs from "./pages/admin/StoreLogs";
+import StoreUpdates from "./pages/admin/StoreUpdates";
 
 import NotFound from "./pages/NotFound";
 
@@ -85,16 +93,23 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/faqs" element={<FAQs />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/features" element={<Features />} />
           <Route path="/claim/:token" element={<ClaimInvitation />} />
           
           {/* User Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/cards" element={<AllCards />} />
+          <Route path="/dashboard/cards/:id" element={<CardDetail />} />
           <Route path="/dashboard/transactions" element={<AllTransactions />} />
           <Route path="/card/:id" element={<CardDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/invite" element={<Invite />} />
+          <Route path="/updates" element={<Updates />} />
           
           {/* Super Admin */}
           <Route path="/admin" element={<SuperAdminDashboard />} />
@@ -116,6 +131,7 @@ const App = () => (
           <Route path="/network-admin/admins" element={<NetworkAdmins />} />
           <Route path="/network-admin/logs" element={<NetworkLogs />} />
           <Route path="/network-admin/approvals" element={<StoreApprovals />} />
+          <Route path="/network-admin/updates" element={<NetworkUpdates />} />
           
           {/* Store Admin */}
           <Route path="/store-admin" element={<StoreAdminDashboard />} />
@@ -126,6 +142,7 @@ const App = () => (
           <Route path="/store-admin/billbook" element={<StoreBillBook />} />
           <Route path="/store-admin/offers" element={<StoreOffers />} />
           <Route path="/store-admin/logs" element={<StoreLogs />} />
+          <Route path="/store-admin/updates" element={<StoreUpdates />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
